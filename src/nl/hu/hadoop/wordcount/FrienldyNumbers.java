@@ -41,11 +41,12 @@ public class FrienldyNumbers {
 *  map: in plaats van het getal, is de som de key. de value is 1 van de bevriende getallen.
 *  reduce: controleer of voor een key: key -val1 == val2
 * */
-class FriendlyNumberMapper extends Mapper<LongWritable,Text,Integer,Integer> {
+class FriendlyNumberMapper extends Mapper<LongWritable,Text,IntWritable,IntWritable> {
     public void map(LongWritable Key, String value, Context context) throws IOException, InterruptedException {
         String[] getallen = value.split("\\r?\\n");
-        for (String s : getallen){
-            context.write(diviserSum(Integer.parseInt(s)),Integer.parseInt(s));
+        for (String s : getallen) {
+            context.write(new IntWritable(diviserSum(Integer.parseInt(s))), new IntWritable(Integer.parseInt(s)));
+        }
     }
     public Integer diviserSum(Integer input){
         int maxD = (int)Math.sqrt(input);
@@ -62,7 +63,7 @@ class FriendlyNumberMapper extends Mapper<LongWritable,Text,Integer,Integer> {
         return sum;
     }
 }
-class FriendlyNumberReducer extends Reducer<Integer,Integer,Integer,String> {
+class FriendlyNumberReducer extends Reducer<IntWritable, IntWritable, IntWritable, IntWritable> {
     public void reduce(Integer key, Iterable<Integer> values, Context context) throws IOException,InterruptedException {
         Iterator<Integer> getValues = values.iterator();
         while(getValues.hasNext()){
